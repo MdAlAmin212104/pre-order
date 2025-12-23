@@ -39,12 +39,21 @@ const RecentOrders = () => {
 
     return (
         <s-section>
-            <div style={{display: "flex", justifyContent: "space-between", marginBlock: "1rem"}}>
-                <h2 style={{ marginTop: "0rem", marginBottom: "0.5rem" }}>
-                    Recent Orders
-                </h2>
-                <s-button variant="secondary">View all</s-button>
-            </div>
+            <s-grid gridTemplateColumns="repeat(4, 1fr)"
+                gap="small"
+                justifyContent="center"
+                paddingBlockEnd="base"
+                placeContent="space-between"
+                alignItems="center">
+                <s-grid-item gridColumn="span 3">
+                    <s-heading> <strong>Recent Orders</strong>
+                    </s-heading>
+                </s-grid-item>
+                <s-grid-item gridColumn="span 1">
+                    <s-stack direction="inline" gap="small" justifyContent="end"><s-button variant="secondary">View all</s-button></s-stack>
+
+                </s-grid-item>
+            </s-grid>
             <div>
                 {recentOrders.map((order) => (
                     <s-box
@@ -53,26 +62,37 @@ const RecentOrders = () => {
                         background="subdued"
                         border="base"
                     >
-                        <div style={{ display: "flex", justifyContent: "space-between" }}>
-                            <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
-                                <s-thumbnail
-                                    alt="White sneakers"
-                                    src="https://cdn.shopify.com/static/images/polaris/thumbnail-wc_src.jpg"
-                                />
-                                <div>
-                                    <s-paragraph><strong>{order.product}</strong></s-paragraph>
+                        <s-grid
+                            gridTemplateColumns="repeat(4, 1fr)"
+                            gap="small"
+                            justifyContent="space-between"
+                            alignItems="center"
+                        >
+                            <s-grid-item gridColumn="span 3">
+                                <s-stack direction="inline" gap="small" justifyContent="start" alignItems="center" alignContent="center">
+                                    <s-thumbnail
+                                        alt="White sneakers"
+                                        src="https://cdn.shopify.com/static/images/polaris/thumbnail-wc_src.jpg"
+                                    />
+                                    <s-box>
+                                        <s-paragraph><strong>{order.product}</strong></s-paragraph>
+                                        <s-paragraph>
+                                            {order.customer} • {order.date}
+                                        </s-paragraph>
+                                    </s-box>
+                                </s-stack>
+                            </s-grid-item>
+                            <s-grid-item gridColumn="span 1">
+                                <s-stack direction="inline" gap="small" justifyContent="end" alignItems="center" alignContent="center">
+                                    <s-badge tone={getBadgeStatus(order.status)}>
+                                        {order.status}
+                                    </s-badge>
                                     <s-paragraph>
-                                        {order.customer} • {order.date}
+                                        <strong>{order.amount}</strong>
                                     </s-paragraph>
-                                </div>
-                            </div>
-                            <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-                                <s-badge tone={getBadgeStatus(order.status)}>
-                                    {order.status}
-                                </s-badge>
-                                <s-paragraph><strong>{order.amount}</strong></s-paragraph>
-                            </div>
-                        </div>
+                                </s-stack>
+                            </s-grid-item>
+                        </s-grid>
                     </s-box>
                 ))}
             </div>
