@@ -8,7 +8,6 @@ import type {
 import { authenticate } from "../shopify.server";
 import { boundary } from "@shopify/shopify-app-react-router/server";
 import HeadingInfo from "./pages/Dashboards/Heading";
-import Summery from "./pages/Dashboards/Summery";
 import RecentOrders from "./pages/Dashboards/RecentOrders";
 import SetupPreview from "./pages/Dashboards/SetupPreview";
 import Metrics from "./pages/Dashboards/Metrics";

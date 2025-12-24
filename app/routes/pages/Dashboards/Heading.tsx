@@ -1,6 +1,25 @@
-
+/* eslint-disable import/no-unresolved */
+import {useAppBridge} from '@shopify/app-bridge-react';
 
 const HeadingInfo = () => {
+  const shopify = useAppBridge();
+
+
+  const selectProduct = async () => {
+    console.log("button click");
+    const selected = await shopify.resourcePicker({
+      type: 'product',
+      multiple: true
+    });
+
+    if (selected) {
+      console.log('Selected:', selected);
+    } else {
+      console.log('Picker cancelled');
+    }
+  };
+
+
   return (
     <s-section>
       <s-grid gridTemplateColumns="repeat(4, 1fr)"
@@ -13,7 +32,9 @@ const HeadingInfo = () => {
           <s-paragraph>Manage your pre-orders and track performance</s-paragraph>
         </s-grid-item>
         <s-grid-item gridColumn="span 1">
-          <s-stack direction="inline" justifyContent="end"><s-button variant="primary">Add Product</s-button></s-stack>
+          <s-stack direction="inline" justifyContent="end">
+            <s-button variant="primary" onClick={selectProduct}>Add Product</s-button>
+          </s-stack>
         </s-grid-item>
       </s-grid>
     </s-section>
