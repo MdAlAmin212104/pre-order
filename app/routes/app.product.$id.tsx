@@ -27,6 +27,7 @@ export default function ProductDetails() {
     const [selectedVariantId, setSelectedVariantId] = useState<string | null>(null);
     const [variantSettings, setVariantSettings] = useState<Record<string, VariantSettings>>({});
     const [applyToAllMode, setApplyToAllMode] = useState<boolean>(true);
+    const [SettingsChange, setSettingsChange] = useState(false);
 
     const handleInputChange = (field: keyof FormData, value: string | boolean) => {
         setFormData(prev => ({
@@ -46,7 +47,7 @@ export default function ProductDetails() {
             setVariantSettings(updatedSettings);
             console.log(`Applied to ALL variants - ${field}:`, value);
             console.log('All variant settings:', updatedSettings);
-        } 
+        }
         // If a specific variant is selected and NOT in "apply to all" mode
         else if (selectedVariantId && !applyToAllMode && ['start_date', 'shipping_date', 'limit', 'button_text', 'message', 'payment_type'].includes(field)) {
             setVariantSettings(prev => ({
@@ -188,13 +189,9 @@ export default function ProductDetails() {
         handleInputChange(field, value);
     };
 
-    const handleLimitChange = (value: string) => {
-        handleInputChange('limit', value);
-    };
-
     const handleVariantClick = (variantId: string) => {
         setSelectedVariantId(variantId);
-        
+
         // Load the settings for this variant
         const settings = variantSettings[variantId];
         if (settings) {
@@ -216,6 +213,15 @@ export default function ProductDetails() {
     const toggleApplyToAll = () => {
         setApplyToAllMode(!applyToAllMode);
         console.log('Apply to All mode:', !applyToAllMode ? 'ENABLED' : 'DISABLED');
+    };
+
+    const SettingsChangeHandler = (e: any) => {
+        console.log(e.currentTarget.values, 'this is value list on change');
+        if (e.currentTarget.values[0] === "custom") {
+            setSettingsChange(true);
+        } else {
+            setSettingsChange(false);
+        }
     };
 
     return (
@@ -284,7 +290,7 @@ export default function ProductDetails() {
                         {/* Apply to All Toggle */}
                         <s-section>
                             <s-stack direction="inline" gap="base" alignItems="center" justifyContent="space-between">
-                                <s-stack direction="inline" gap="small" alignItems="center"  paddingBlockEnd="base">
+                                <s-stack direction="inline" gap="small" alignItems="center" paddingBlockEnd="base">
                                     <s-checkbox
                                         checked={applyToAllMode}
                                         onChange={toggleApplyToAll}
@@ -304,78 +310,77 @@ export default function ProductDetails() {
                                     </s-text>
                                 </s-banner>
                             )}
+                            <s-choice-list
+                                name="Use default settings"
+                                label="Use default settings"
+                                onChange={SettingsChangeHandler}
+                            >
+                                <s-choice selected value="default">Default</s-choice>
+                                <s-choice value="custom">Use settings you choose.</s-choice>
+                            </s-choice-list>
                         </s-section>
 
-                        {/* Dates Section */}
-                        <s-section>
-                            <s-heading>
-                                <strong>Pre-order Dates</strong>
-                            </s-heading>
-                            <s-stack gap="base" direction="inline" justifyContent="space-between" alignContent="center" alignItems="center">
-                                <s-box>
-                                    <s-heading>Start Date : </s-heading>
-                                    <s-date-field
-                                        value={formData.start_date}
-                                        onChange={(e: any) => handleDateChange('start_date', e.target.value)}
-                                        defaultValue="Current"
-                                    />
-                                </s-box>
-                                <s-box>
-                                    <s-heading>Pre-order Limit : </s-heading>
-                                    <s-number-field
-                                        value={formData.limit}
-                                        onChange={(e: any) => handleLimitChange(e.target.value)}
-                                        placeholder="0"
-                                        step={1}
-                                        min={0}
-                                    />
-                                </s-box>
+                        {SettingsChange && (
+                            <>
+                                <s-section>
+                                    <s-heading><strong>Button</strong></s-heading>
+                                    <s-grid gridTemplateColumns="repeat(3, 1fr)" gap="base">
+                                        <s-box>
+                                            <s-text-field
+                                                label="Text on Button"
+                                                value={formData.button_text}
+                                                onChange={(e: any) =>
+                                                    handleInputChange("button_text", e.target.value)
+                                                }
+                                                placeholder="Button text"
+                                            />
+                                        </s-box>
 
-                                <s-box>
-                                    <s-heading>Shipping Date : </s-heading>
-                                    <s-date-field
-                                        value={formData.shipping_date}
-                                        onChange={(e: any) => handleDateChange('shipping_date', e.target.value)}
-                                        required
-                                    />
-                                </s-box>
-                            </s-stack>
-                        </s-section>
+                                        <s-box>
+                                            <s-text-field
+                                                label="Pre-order Message"
+                                                value={formData.message}
+                                                onChange={(e: any) =>
+                                                    handleInputChange("message", e.target.value)
+                                                }
+                                                placeholder="pre order message"
+                                            />
+                                        </s-box>
 
-                        {/* Display Settings Section */}
-                        <s-section>
-                            <s-heading>
-                                <strong>Display Settings</strong>
-                            </s-heading>
-                            <s-stack gap="base">
-                                <s-stack direction="inline" gap="small" justifyContent="space-evenly">
-                                    <s-text-field
-                                        label="Button Text"
-                                        value={formData.button_text}
-                                        onChange={(e: any) => handleInputChange("button_text", e.target.value)}
-                                        error={errors.button_text}
-                                        required
-                                        placeholder="Pre-order Now"
-                                    />
-                                    <s-select
-                                        label="Payment Type"
-                                        value={formData.payment_type}
-                                        onChange={(e: any) => handleInputChange("payment_type", e.target.value)}
-                                    >
-                                        <s-option value="full">Full Payment</s-option>
-                                        <s-option value="partial">Partial Payment</s-option>
-                                        <s-option value="deposit">Deposit Only</s-option>
-                                    </s-select>
-                                </s-stack>
+                                        <s-box>
+                                            <s-select label="message placements">
+                                                <s-option selected value="1">Below Add to Cart Button</s-option>
+                                                <s-option value="2">Above Add to Cart Button</s-option>
+                                            </s-select>
+                                        </s-box>
+                                    </s-grid>
 
-                                <s-text-field
-                                    label="Pre-order Message"
-                                    value={formData.message}
-                                    onChange={(e: any) => handleInputChange("message", e.target.value)}
-                                    placeholder="This product is available for pre-order..."
-                                />
-                            </s-stack>
-                        </s-section>
+
+                                </s-section>
+
+                                <s-section>
+                                    <s-heading><strong>Pre-order period</strong></s-heading>
+                                    <s-stack gap="base" direction="inline" justifyContent="space-between" alignContent="center" alignItems="center">
+                                        <s-date-field
+                                            label="Pre-order start date"
+                                            value={formData.start_date}
+                                            onChange={(e: any) => handleDateChange('start_date', e.target.value)}
+                                            
+                                        />
+                                        <s-date-field
+                                            label="Pre-order end date"
+                                            value={formData.shipping_date}
+                                            onChange={(e: any) => handleDateChange('shipping_date', e.target.value)}
+                                        />
+                                    </s-stack>
+                                </s-section>
+
+                            </>
+
+                        )}
+
+
+
                     </>
                 )}
 
@@ -389,9 +394,9 @@ export default function ProductDetails() {
                             <s-text>Click a variant to {applyToAllMode ? "view" : "customize"}</s-text>
 
                             {formData.variants.map((variant: { id: string; title: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined; image: string | undefined }) => (
-                                <s-clickable 
-                                    key={variant.id} 
-                                    borderRadius="base" 
+                                <s-clickable
+                                    key={variant.id}
+                                    borderRadius="base"
                                     onClick={() => handleVariantClick(variant.id)}
                                 >
                                     <s-stack
@@ -407,7 +412,7 @@ export default function ProductDetails() {
                                     >
                                         <s-thumbnail size="small" src={variant.image} alt={variant.title as string} />
                                         <s-text>{variant.title}</s-text>
-                                        {selectedVariantId === variant.id && (
+                                        {selectedVariantId === variant.id && !applyToAllMode && (
                                             <s-badge tone="info">Active</s-badge>
                                         )}
                                     </s-stack>
@@ -415,7 +420,7 @@ export default function ProductDetails() {
                             ))}
                         </s-stack>
                     ) : (
-                        <s-paragraph>No variants found</s-paragraph>
+                        <s-paragraph>No Product found</s-paragraph>
                     )}
                 </s-section>
             </s-page>
