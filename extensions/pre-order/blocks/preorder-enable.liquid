@@ -1,0 +1,38 @@
+{% comment %}
+  Pre-Order Enable Block
+  Merchants add this block to enable pre-order buttons
+{% endcomment %}
+
+{% render 'preorder-loader' %}
+
+{% schema %}
+{
+  "name": "Pre-Order Buttons",
+  "target": "body",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "This will change ALL 'Add to Cart' buttons to 'Pre-Order' buttons across your entire store."
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button Text",
+      "default": "Pre-Order",
+      "info": "Text to display on all product buttons"
+    },
+    {
+      "type": "color",
+      "id": "button_color",
+      "label": "Button Background Color",
+      "default": "#ff6b6b"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_icon",
+      "label": "Show Clock Icon",
+      "default": true
+    }
+  ]
+}
+{% endschema %}
